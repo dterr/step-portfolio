@@ -2,6 +2,7 @@
 #content {
   margin-left: auto;
   margin-right: auto;
+  margin-top: 30px;
   width: 650px;
 }
 
@@ -9,9 +10,27 @@
   margin-top: 20px;
 }
 
-/* Objects */
-nav {
-    
+/* Navbar */
+.navbar {
+    overflow: hidden;
+    background-color: #3a3838;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+.navbar a {
+    float: left;
+    display: block;
+    color: aliceblue;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.navbar a:hover {
+    background: #fff;
+    color:black;
 }
 
 /* Added CSS Styles, edited boilerplate from brackets.com */
@@ -28,7 +47,8 @@ body {
     line-height: 1.5;
     margin: 0 auto;
     max-width: 800px;
-    /* Padding: 2em 2em 4em; */
+    padding-top: 2em;
+    padding-bottom: 4em;
 }
 
 h1, h2 {
@@ -50,10 +70,22 @@ b, strong {
 }
 
 img {
+    animation: colorize 2s cubic-bezier(0, 0, .78, .36) 1;
     background: transparent;
     border: 10px solid #222;
     border-radius: 4px;
     display: block;
     margin: 1.3em auto;
     max-width: 70%;
+}
+
+@keyframes colorize {
+    0% {
+        -webkit-filter: grayscale(100%);
+        filter: grayscale(100%);
+    }
+    100% {
+        -webkit-filter: grayscale(0%);
+        filter: grayscale(0%);
+    }
 }
