@@ -14,6 +14,7 @@
 .navbar {
     overflow: hidden;
     background-color: #3a3838;
+    max-width: 800px;
     position: fixed;
     top: 0;
     width: 100%;
@@ -36,6 +37,8 @@
 /* Added CSS Styles, edited boilerplate from brackets.com */
 html {
     background: #3a3838;
+    background-image: url("images/g_bg.jpg");
+    background-size: 50%;
     -webkit-font-smoothing: antialiased;
 }
 
