@@ -34,6 +34,26 @@
     color:black;
 }
 
+.navbar a#box-1:hover {
+    background: #4285f5;
+    color: black;
+}
+
+.navbar a#box-2:hover {
+    background: #db4437;
+    color:black;
+}
+
+.navbar a#box-3:hover {
+    background: #f4b400;
+    color:black;
+}
+
+.navbar a#box-4:hover {
+    background: #0f9d58;
+    color:black;
+}
+
 /* Added CSS Styles, edited boilerplate from brackets.com */
 html {
     background: #3a3838;
