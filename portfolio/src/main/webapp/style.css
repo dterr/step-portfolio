@@ -25,6 +25,7 @@
     display: block;
     color: aliceblue;
     text-align: center;
+    transition: all 0.3s ease;
     padding: 14px 16px;
     text-decoration: none;
 }
@@ -93,7 +94,7 @@ b, strong {
 }
 
 img {
-    animation: colorize 2s cubic-bezier(0, 0, .78, .36) 1;
+    /* animation: colorize 2s cubic-bezier(0, 0, .78, .36) 1;*/
     background: transparent;
     border: 10px solid #222;
     border-radius: 4px;
