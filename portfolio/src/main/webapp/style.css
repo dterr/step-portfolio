@@ -158,17 +158,6 @@ html {
 }
 
 body {
-<<<<<<< HEAD
-  background: #fff;
-  color: #000;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 1.5;
-  margin: 0 auto;
-  max-width: 800px;
-  padding-top: 2em;
-  padding-bottom: 4em;
-=======
     background: #fff;
     color: #000;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -177,7 +166,6 @@ body {
     margin: 0 auto;
     max-width: 800px;
     padding: 2em 0em 4em;
->>>>>>> dtDev
 }
 
 h1, h2 {
