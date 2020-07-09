@@ -10,6 +10,12 @@
   margin-top: 20px;
 }
 
+#comment-message {
+  height: 200px;
+  font-size: 14pt;
+  font: Helvetica;
+}
+
 /* Navbar */
 .navbar {
   overflow: hidden;
