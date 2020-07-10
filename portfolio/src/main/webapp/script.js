@@ -13,16 +13,23 @@
 // limitations under the License.
 
 /**
- * Adds a random greeting to the page.
+ * Fetches the current message board and fills UI with helper function.
  */
-function addRandomGreeting() {
-  const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
+function loadComments() {
+  console.log("Loading Comments...");
+  fetch('/data').then(response => response.json()).then((comments) => {
+    const historyEl = document.getElementById("messageBoard");
+    console.log("Building Message Board...");
+    comments.forEach((line) => {
+      console.log("Building comment from " + line);
+      historyEl.appendChild(createCommentElement(line));
+    });
+  });
+}
 
-  // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
-
-  // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
+/** Helper function to populate HTML element */
+function createCommentElement(entry) {
+  const postElement = document.createElement("p");
+  postElement.innerText = "[" + entry.timeStamp + "] " + entry.author + " wrote: " + entry.messageContent;
+  return postElement;
 }
