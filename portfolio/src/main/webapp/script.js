@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * Fetches the current state of the game and builds the UI.
+ * Fetches the current message board and fills UI with helper function.
  */
 function loadComments() {
   console.log("Loading Comments...");
@@ -27,7 +27,7 @@ function loadComments() {
   });
 }
 
-/** Creates an paragraph element containing text. */
+/** Helper function to populate HTML element */
 function createCommentElement(entry) {
   const postElement = document.createElement("p");
   postElement.innerText = "[" + entry.timeStamp + "] " + entry.author + " wrote: " + entry.messageContent;
