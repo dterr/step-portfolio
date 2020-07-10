@@ -72,16 +72,4 @@ public class DataServlet extends HttpServlet {
     }
     response.sendRedirect("/contact.html");
   }
-
-  /**
-   * @return the request parameter, or the default value if the parameter
-   *         was not specified by the client
-   */
-  private String getParameter(HttpServletRequest request, String name, String defaultValue) {
-    String value = request.getParameter(name);
-    if (value == null) {
-      return defaultValue;
-    }
-    return value;
-  }
 }
