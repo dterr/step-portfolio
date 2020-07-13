@@ -41,12 +41,14 @@ public class LoginServlet extends HttpServlet{
 
     ArrayList<String> arrStrings = new ArrayList();
     if (loginStatus) {
+      arrStrings.add("true");
       String userEmail = userService.getCurrentUser().getEmail();
       String urlToRedirectToAfterUserLogsOut = "/contact.html";
       String logoutURL = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
-      arrStrings.add("<p>Hello, " + userEmail + "! You are logged in.</p>");
-      arrStrings.add("<p><a href=\""+ logoutURL + "\">Click here to log out.</a></p>");
+      arrStrings.add("<p>Hello, " + userEmail + "! You are logged in.</p>" + 
+        "<p><a href=\""+ logoutURL + "\">Click here to log out.</a></p>");
     } else {
+      arrStrings.add("false");
       String loginURL = userService.createLoginURL("/contact.html");
       arrStrings.add("<p><a href=\"" + loginURL + "\"> Login Here </a></p>");
     }
