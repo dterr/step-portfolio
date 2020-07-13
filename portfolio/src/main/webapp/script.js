@@ -46,35 +46,6 @@ function loadComments() {
   });
 }
 
-/** Helper function to populate HTML login element */
-function createLoginStatusElement(status, toggle) {
-  const loginElement = document.createElement("p");
-  if (status) {
-    loginElement.innerText = "You are logged in.";
-  } else {
-    loginElement.innerText = "You are not logged in.";
-    // Create anchor element. 
-    var a = document.createElement('a');  
-      
-    // Create the text node for anchor element. 
-    var link = document.createTextNode("This is link"); 
-      
-    // Append the text node to anchor element. 
-    a.appendChild(link);  
-      
-    // Set the title. 
-    a.title = "This is Link";  
-      
-    // Set the href property. 
-    a.href = toggle;  
-      
-    // Append the anchor element to the body. 
-    loginElement.append(a); 
-  }
-  loginElement.innerText = toggle;
-  return loginElement;
-}
-
 /** Helper function to populate HTML comment element */
 function createCommentElement(comment) {
   const postElement = document.createElement("p");
