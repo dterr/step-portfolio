@@ -37,11 +37,11 @@ function verifyLogin() {
  */
 function loadComments() {
   console.log("Loading Comments...");
-  fetch('/data').then(response => response.json()).then((messageBoard) => {
-    const historyEl = document.getElementById("messageBoard");
+  fetch('/data').then(response => response.json()).then((arrComments) => {
+    const messageContainer = document.getElementById("messageBoard");
     console.log("Building Message Board...");
-    messageBoard.messages.forEach((line) => {
-      historyEl.appendChild(createCommentElement(line));
+    arrComments.forEach((line) => {
+      messageContainer.appendChild(createCommentElement(line));
     });
   });
 }
