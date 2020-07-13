@@ -12,24 +12,72 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
+function loadMessageBoard() {
+  console.log("Verifying login...");
+  verifyLogin();
+  console.log("Building Message Board...");
+  loadComments();
+}
+
+/** Contacts Login servlet to verify if user is logged in. */
+function verifyLogin() {
+  console.log("Fetching login status...");
+  fetch('/login').then(response => response.json()).then((arrStrings) => {
+    const loginElement = document.getElementById("login-box");
+    console.log("Displaying login status");
+    arrStrings.forEach((line) => {
+      loginElement.innerHTML += line;
+    });
+  });
+}
+
 /**
  * Fetches the current message board and fills UI with helper function.
  */
 function loadComments() {
   console.log("Loading Comments...");
-  fetch('/data').then(response => response.json()).then((comments) => {
+  fetch('/data').then(response => response.json()).then((messageBoard) => {
     const historyEl = document.getElementById("messageBoard");
     console.log("Building Message Board...");
-    comments.forEach((line) => {
-      console.log("Building comment from " + line);
+    messageBoard.messages.forEach((line) => {
       historyEl.appendChild(createCommentElement(line));
     });
   });
 }
 
-/** Helper function to populate HTML element */
-function createCommentElement(entry) {
+/** Helper function to populate HTML login element */
+function createLoginStatusElement(status, toggle) {
+  const loginElement = document.createElement("p");
+  if (status) {
+    loginElement.innerText = "You are logged in.";
+  } else {
+    loginElement.innerText = "You are not logged in.";
+    // Create anchor element. 
+    var a = document.createElement('a');  
+      
+    // Create the text node for anchor element. 
+    var link = document.createTextNode("This is link"); 
+      
+    // Append the text node to anchor element. 
+    a.appendChild(link);  
+      
+    // Set the title. 
+    a.title = "This is Link";  
+      
+    // Set the href property. 
+    a.href = toggle;  
+      
+    // Append the anchor element to the body. 
+    loginElement.append(a); 
+  }
+  loginElement.innerText = toggle;
+  return loginElement;
+}
+
+/** Helper function to populate HTML comment element */
+function createCommentElement(comment) {
   const postElement = document.createElement("p");
-  postElement.innerText = "[" + entry.timeStamp + "] " + entry.author + " wrote: " + entry.messageContent;
+  postElement.innerText = "[" + comment.timeStamp + "] " + comment.author + " wrote: " + comment.messageContent;
   return postElement;
 }
