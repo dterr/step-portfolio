@@ -25,10 +25,13 @@ function verifyLogin() {
   console.log("Fetching login status...");
   fetch('/login').then(response => response.json()).then((arrStrings) => {
     const loginElement = document.getElementById("login-box");
+    if (arrStrings[0] == "false") {
+      document.getElementById("comment-form").style.display = "none";
+    } else {
+      document.getElementById("comment-form").style.display = "block";
+    }
     console.log("Displaying login status");
-    arrStrings.forEach((line) => {
-      loginElement.innerHTML += line;
-    });
+    loginElement.innerHTML += arrStrings[1];
   });
 }
 
