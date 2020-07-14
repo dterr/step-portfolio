@@ -12,24 +12,46 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
+function loadMessageBoard() {
+  console.log("Verifying login...");
+  verifyLogin();
+  console.log("Building Message Board...");
+  loadComments();
+}
+
+/** Contacts Login servlet to verify if user is logged in. */
+function verifyLogin() {
+  console.log("Fetching login status...");
+  fetch('/login').then(response => response.json()).then((arrStrings) => {
+    const loginElement = document.getElementById("login-box");
+    if (arrStrings[0] == "false") {
+      document.getElementById("comment-form").style.display = "none";
+    } else {
+      document.getElementById("comment-form").style.display = "block";
+    }
+    console.log("Displaying login status");
+    loginElement.innerHTML += arrStrings[1];
+  });
+}
+
 /**
  * Fetches the current message board and fills UI with helper function.
  */
 function loadComments() {
   console.log("Loading Comments...");
-  fetch('/data').then(response => response.json()).then((comments) => {
-    const historyEl = document.getElementById("messageBoard");
+  fetch('/data').then(response => response.json()).then((arrComments) => {
+    const messageContainer = document.getElementById("messageBoard");
     console.log("Building Message Board...");
-    comments.forEach((line) => {
-      console.log("Building comment from " + line);
-      historyEl.appendChild(createCommentElement(line));
+    arrComments.forEach((line) => {
+      messageContainer.appendChild(createCommentElement(line));
     });
   });
 }
 
-/** Helper function to populate HTML element */
-function createCommentElement(entry) {
+/** Helper function to populate HTML comment element */
+function createCommentElement(comment) {
   const postElement = document.createElement("p");
-  postElement.innerText = "[" + entry.timeStamp + "] " + entry.author + " wrote: " + entry.messageContent;
+  postElement.innerText = "[" + comment.timeStamp + "] " + comment.author + " wrote: " + comment.messageContent;
   return postElement;
 }

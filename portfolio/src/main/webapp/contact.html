@@ -14,7 +14,7 @@
     <a id="box-3" href="gallery.html">Gallery</a>
     <a id="box-4" href="contact.html">Contact</a>
   </div>
-  <body onload="loadComments()">
+  <body onload="loadMessageBoard()">
     <div id="content">
         <ul>
           <li><a href="https://www.linkedin.com/in/dominicterrones/">My LinkedIn</a></li>
@@ -22,9 +22,8 @@
           <li><a href="mailto:dterrones31@gmail.com"> Email me! </a></li>
         </ul>
       <h2> Leave a Comment! </h2>
-      <form action="/data" method="POST">
-        <input type="text" id="author" name="author" placeholder="Your Name" required>
-        <br>
+      <p id="login-box"></p>
+      <form action="/data" method="POST" id="comment-form">
         <textarea rows="5" cols="60" id="comment-message" name="comment-message" placeholder="Your Message" required></textarea>
         <br>
         <button type="submit">Submit</button>
