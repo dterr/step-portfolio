@@ -38,18 +38,18 @@ public class LoginServlet extends HttpServlet{
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
     boolean loginStatus = userService.isUserLoggedIn();
+    String urlToRedirectToAfterUserLogsInOrOut = "/contact.html";
 
     ArrayList<String> arrStrings = new ArrayList();
     if (loginStatus) {
       arrStrings.add("true");
       String userEmail = userService.getCurrentUser().getEmail();
-      String urlToRedirectToAfterUserLogsOut = "/contact.html";
-      String logoutURL = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
+      String logoutURL = userService.createLogoutURL(urlToRedirectToAfterUserLogsInOrOut);
       arrStrings.add("<p>Hello, " + userEmail + "! You are logged in.</p>" + 
         "<p><a href=\""+ logoutURL + "\">Click here to log out.</a></p>");
     } else {
       arrStrings.add("false");
-      String loginURL = userService.createLoginURL("/contact.html");
+      String loginURL = userService.createLoginURL(urlToRedirectToAfterUserLogsInOrOut);
       arrStrings.add("<p><a href=\"" + loginURL + "\"> Login Here </a></p>");
     }
 
