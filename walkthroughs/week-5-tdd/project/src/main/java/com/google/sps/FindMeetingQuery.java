@@ -50,11 +50,11 @@ public final class FindMeetingQuery {
 
     
 
-    ArrayList<TimeRange> sortedUnavailableTimes = collectBusyTimes(request.attendees, events);
+    ArrayList<TimeRange> sortedUnavailableTimes = (ArrayList<TimeRange>) collectBusyTimes(request.getAttendees(), events);
     if (sortedUnavailableTimes.isEmpty()) {
       return sortedUnavailableTimes;
     }
-    ArrayList<TimeRange> freeWindows = findFreeWindows(sortedUnavailableTimes);
+    ArrayList<TimeRange> freeWindows = (ArrayList<TimeRange>) findAppropiateFreeWindows(sortedUnavailableTimes, request.getDuration());
 
 
     
@@ -72,7 +72,7 @@ public final class FindMeetingQuery {
   private Collection<TimeRange> collectBusyTimes(Collection<String> attendees, Collection<Event> events) {
     HashSet<TimeRange> unavailableTimes = new HashSet<TimeRange>();
     for (Event cur : events) {
-      if (!Collections.disjoint(attendees, guests)) {
+      if (!Collections.disjoint(cur.getAttendees(), attendees)) {
         unavailableTimes.add(cur.getWhen());
       }
     }
@@ -82,7 +82,7 @@ public final class FindMeetingQuery {
     return sortedUnavailableTimes;
   }
 
-  private Collection<TimeRange> findFreeWindows(Collection<TimeRange> sortedUnavailableTimes) {
+  private Collection<TimeRange> findAppropiateFreeWindows(Collection<TimeRange> sortedUnavailableTimes, long duration) {
     List<TimeRange> freeWindows = new ArrayList<>();
 
     int previousEventEnd = 0;
@@ -92,13 +92,13 @@ public final class FindMeetingQuery {
           previousEventEnd = curWhen.end(); 
         }
         continue;
-      } else if (request.getDuration() <= curWhen.start() - previousEventEnd) {
+      } else if (duration <= curWhen.start() - previousEventEnd) {
         freeWindows.add(TimeRange.fromStartEnd(previousEventEnd, curWhen.start(), false));
       }
       previousEventEnd = curWhen.end();
     }
 
-    if (TimeRange.WHOLE_DAY.end() - previousEventEnd >= request.getDuration()) {
+    if (TimeRange.WHOLE_DAY.end() - previousEventEnd >= duration) {
       freeWindows.add(TimeRange.fromStartEnd(previousEventEnd, TimeRange.WHOLE_DAY.end(), false));
     }
     return freeWindows;
