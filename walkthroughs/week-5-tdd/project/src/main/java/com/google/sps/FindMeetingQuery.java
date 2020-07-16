@@ -65,22 +65,23 @@ public final class FindMeetingQuery {
     TimeRange prev = sortedUnavalableTimes.get(0);
 
 
-    int windowStart = 0;
     int previousEventEnd = 0;
     for (TimeRange curWhen : sortedUnavalableTimes) {
       if (curWhen.start() <= previousEventEnd) { //Overlapping events
-        if (!(curWhen.end() < previousEventEnd)) {
-          previousEventEnd = curWhen.end(); //check for encapsulation
+        if (!(curWhen.end() < previousEventEnd)) { //confirm no encapsulation
+          previousEventEnd = curWhen.end(); 
         }
         continue;
-      } else if (request.getDuration() <= curWhen.start() - previousEventEnd ) {
+      } else if (request.getDuration() <= curWhen.start() - previousEventEnd) {
         freeWindows.add(TimeRange.fromStartEnd(previousEventEnd, curWhen.start(), false));
       }
       previousEventEnd = curWhen.end();
     }
+
     if (TimeRange.WHOLE_DAY.end() - previousEventEnd >= request.getDuration()) {
       freeWindows.add(TimeRange.fromStartEnd(previousEventEnd, TimeRange.WHOLE_DAY.end(), false));
     }
+    
     return freeWindows;
   }
 }
