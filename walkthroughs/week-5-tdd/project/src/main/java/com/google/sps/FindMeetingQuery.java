@@ -31,8 +31,10 @@ public final class FindMeetingQuery {
 
   */
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
+
     ArrayList<TimeRange> candidates = new ArrayList<>();
     ArrayList<String> guests = new ArrayList<>(request.getAttendees());
+    ArrayList<String> optionals = new ArrayList<>(request.getOptionalAttendees());
     
     if ((int) request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
       return candidates; //empty
@@ -44,29 +46,47 @@ public final class FindMeetingQuery {
       return candidates; //empty
     }
 
-    HashSet<TimeRange> unavailableTimes = new HashSet<TimeRange>();
-    List<TimeRange> freeWindows = new ArrayList<>();
 
+
+    
+
+    ArrayList<TimeRange> sortedUnavailableTimes = collectBusyTimes(request.attendees, events);
+    if (sortedUnavailableTimes.isEmpty()) {
+      return sortedUnavailableTimes;
+    }
+    ArrayList<TimeRange> freeWindows = findFreeWindows(sortedUnavailableTimes);
+
+
+    
+
+
+    if (!optionals.isEmpty()) {
+      ArrayList<TimeRange> preferredTimes = new ArrayList<>();
+      boolean accomodated = false;
+      /*Collect free windows for the optionals. Return the intersection. */
+    }
+    return freeWindows;
+  }
+
+
+  private Collection<TimeRange> collectBusyTimes(Collection<String> attendees, Collection<Event> events) {
+    HashSet<TimeRange> unavailableTimes = new HashSet<TimeRange>();
     for (Event cur : events) {
-      if (!Collections.disjoint(cur.getAttendees(), guests)) {
+      if (!Collections.disjoint(attendees, guests)) {
         unavailableTimes.add(cur.getWhen());
       }
     }
 
-    if (unavailableTimes.isEmpty()) {
-      freeWindows.add(TimeRange.WHOLE_DAY);
-      return freeWindows;
-    }
+    ArrayList<TimeRange> sortedUnavailableTimes = new ArrayList<>(unavailableTimes);
+    Collections.sort(sortedUnavailableTimes, TimeRange.ORDER_BY_START);
+    return sortedUnavailableTimes;
+  }
 
-    ArrayList<TimeRange> sortedUnavalableTimes = new ArrayList<>(unavailableTimes);
-    Collections.sort(sortedUnavalableTimes, TimeRange.ORDER_BY_START);
-
-    
-    TimeRange prev = sortedUnavalableTimes.get(0);
-
+  private Collection<TimeRange> findFreeWindows(Collection<TimeRange> sortedUnavailableTimes) {
+    List<TimeRange> freeWindows = new ArrayList<>();
 
     int previousEventEnd = 0;
-    for (TimeRange curWhen : sortedUnavalableTimes) {
+    for (TimeRange curWhen : sortedUnavailableTimes) {
       if (curWhen.start() <= previousEventEnd) { //Overlapping events
         if (!(curWhen.end() < previousEventEnd)) { //confirm no encapsulation
           previousEventEnd = curWhen.end(); 
@@ -81,7 +101,6 @@ public final class FindMeetingQuery {
     if (TimeRange.WHOLE_DAY.end() - previousEventEnd >= request.getDuration()) {
       freeWindows.add(TimeRange.fromStartEnd(previousEventEnd, TimeRange.WHOLE_DAY.end(), false));
     }
-    
     return freeWindows;
   }
 }
