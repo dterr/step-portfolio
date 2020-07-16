@@ -17,15 +17,67 @@ package com.google.sps;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Collections;
+import java.util.HashSet;
 
 public final class FindMeetingQuery {
+
+  /**
+    Collect busy times
+    Calculate free windows
+    Choose best window
+    Figure which time works best
+
+  */
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-    Collection<TimeRange> candidates = Arrays.asList();
+    ArrayList<TimeRange> candidates = new ArrayList<>();
+    ArrayList<String> guests = new ArrayList<>(request.getAttendees());
     
-    if (request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
+    if ((int) request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
+      return candidates; //empty
+    } else if (events.isEmpty()) {
       return candidates; //empty
     }
+
+    HashSet<TimeRange> unavailableTimes = new HashSet<TimeRange>();
+
+    for (Event cur : events) {
+      if (!Collections.disjoint(cur.getAttendees(), guests)) {
+        unavailableTimes.add(cur.getWhen());
+      }
+    }
+
     
+    
+    ArrayList<TimeRange> sortedUnavalableTimes = new ArrayList<>(unavailableTimes);
+    Collections.sort(sortedUnavalableTimes, TimeRange.ORDER_BY_START);
+
+    List<TimeRange> freeWindows = new ArrayList<>();
+    TimeRange prev = sortedUnavalableTimes.get(0);
+    int windowStart = 0;
+
+    if (sortedUnavalableTimes.isEmpty()) {
+      freeWindows.add(TimeRange.WHOLE_DAY);
+      return freeWindows;
+    }
+
+    for (TimeRange curWhen : sortedUnavalableTimes) {
+      if (curWhen.start() < windowStart) { //Overlapping events
+        windowStart = curWhen.end();
+      } else {
+        TimeRange available = TimeRange.fromStartEnd(windowStart, curWhen.start() - windowStart, false);
+        if (available.duration() >= (int) request.getDuration()) {
+          freeWindows.add(available);
+        }
+        windowStart = curWhen.end();
+      }
+      prev = curWhen;
+    }
+    TimeRange lastavailable = TimeRange.fromStartEnd(windowStart, TimeRange.END_OF_DAY - windowStart, false);
+    if (lastavailable.duration() >= (int) request.getDuration()) {
+      freeWindows.add(lastavailable);
+    }
+    return freeWindows;
   }
 }
