@@ -40,7 +40,7 @@ public final class FindMeetingQuery {
     } else if (events.isEmpty()) {
       candidates.add(TimeRange.WHOLE_DAY);
       return candidates; //empty
-    } else if (guests.size() == 0) {
+    } else if (guests.isEmpty()) {
       candidates.add(TimeRange.WHOLE_DAY);
       return candidates; //empty
     }
@@ -70,7 +70,7 @@ public final class FindMeetingQuery {
       if (curWhen.start() <= previousEventEnd) { //Overlapping events
         previousEventEnd = curWhen.end();
         continue;
-      } else if (request.getDuration() >= curWhen.start() - previousEventEnd ) {
+      } else if (request.getDuration() <= curWhen.start() - previousEventEnd ) {
         freeWindows.add(TimeRange.fromStartEnd(previousEventEnd, curWhen.start(), false));
       }
       previousEventEnd = curWhen.end();
