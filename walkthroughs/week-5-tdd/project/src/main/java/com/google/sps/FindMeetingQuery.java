@@ -35,8 +35,13 @@ public final class FindMeetingQuery {
     ArrayList<String> guests = new ArrayList<>(request.getAttendees());
     
     if ((int) request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
+      candidates.add(TimeRange.WHOLE_DAY);
       return candidates; //empty
     } else if (events.isEmpty()) {
+      candidates.add(TimeRange.WHOLE_DAY);
+      return candidates; //empty
+    } else if (guests.size() == 0) {
+      candidates.add(TimeRange.WHOLE_DAY);
       return candidates; //empty
     }
 
@@ -48,35 +53,30 @@ public final class FindMeetingQuery {
       }
     }
 
-    
-    
     ArrayList<TimeRange> sortedUnavalableTimes = new ArrayList<>(unavailableTimes);
     Collections.sort(sortedUnavalableTimes, TimeRange.ORDER_BY_START);
 
     List<TimeRange> freeWindows = new ArrayList<>();
     TimeRange prev = sortedUnavalableTimes.get(0);
-    int windowStart = 0;
-
+    
     if (sortedUnavalableTimes.isEmpty()) {
       freeWindows.add(TimeRange.WHOLE_DAY);
       return freeWindows;
     }
 
+    int windowStart = 0;
+    int previousEventEnd = 0;
     for (TimeRange curWhen : sortedUnavalableTimes) {
-      if (curWhen.start() < windowStart) { //Overlapping events
-        windowStart = curWhen.end();
-      } else {
-        TimeRange available = TimeRange.fromStartEnd(windowStart, curWhen.start() - windowStart, false);
-        if (available.duration() >= (int) request.getDuration()) {
-          freeWindows.add(available);
-        }
-        windowStart = curWhen.end();
+      if (curWhen.start() <= previousEventEnd) { //Overlapping events
+        previousEventEnd = curWhen.end();
+        continue;
+      } else if (request.getDuration() >= curWhen.start() - previousEventEnd ) {
+        freeWindows.add(TimeRange.fromStartEnd(previousEventEnd, curWhen.start(), false));
       }
-      prev = curWhen;
+      previousEventEnd = curWhen.end();
     }
-    TimeRange lastavailable = TimeRange.fromStartEnd(windowStart, TimeRange.END_OF_DAY - windowStart, false);
-    if (lastavailable.duration() >= (int) request.getDuration()) {
-      freeWindows.add(lastavailable);
+    if (TimeRange.WHOLE_DAY.end() - previousEventEnd >= request.getDuration()) {
+      freeWindows.add(TimeRange.fromStartEnd(previousEventEnd, TimeRange.WHOLE_DAY.end(), false));
     }
     return freeWindows;
   }
