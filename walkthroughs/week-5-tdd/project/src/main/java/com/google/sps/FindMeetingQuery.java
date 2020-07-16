@@ -67,7 +67,9 @@ public final class FindMeetingQuery {
     int previousEventEnd = 0;
     for (TimeRange curWhen : sortedUnavalableTimes) {
       if (curWhen.start() <= previousEventEnd) { //Overlapping events
-        previousEventEnd = curWhen.end();
+        if (!(curWhen.end() < previousEventEnd)) {
+          previousEventEnd = curWhen.end(); //check for encapsulation
+        }
         continue;
       } else if (request.getDuration() <= curWhen.start() - previousEventEnd ) {
         freeWindows.add(TimeRange.fromStartEnd(previousEventEnd, curWhen.start(), false));
