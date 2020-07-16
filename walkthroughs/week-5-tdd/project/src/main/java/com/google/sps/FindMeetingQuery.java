@@ -35,7 +35,6 @@ public final class FindMeetingQuery {
     ArrayList<String> guests = new ArrayList<>(request.getAttendees());
     
     if ((int) request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
-      candidates.add(TimeRange.WHOLE_DAY);
       return candidates; //empty
     } else if (events.isEmpty()) {
       candidates.add(TimeRange.WHOLE_DAY);
