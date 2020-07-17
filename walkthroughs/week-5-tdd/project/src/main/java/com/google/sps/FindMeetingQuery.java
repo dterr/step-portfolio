@@ -43,7 +43,7 @@ public final class FindMeetingQuery {
     
     if ((int) request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
       return candidates; //empty
-    } else if (events.isEmpty()) {
+    } else if (events.isEmpty() || guests.isEmpty()) {
       candidates.add(TimeRange.WHOLE_DAY);
       return candidates; //empty
     } else if (guests.isEmpty()) {
