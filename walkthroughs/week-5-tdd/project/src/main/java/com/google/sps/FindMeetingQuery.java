@@ -39,6 +39,7 @@ public final class FindMeetingQuery {
     ArrayList<TimeRange> candidates = new ArrayList<>();
     ArrayList<String> guests = new ArrayList<>(request.getAttendees());
     ArrayList<String> optionals = new ArrayList<>(request.getOptionalAttendees());
+    long duration = request.getDuration();
     
     if ((int) request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
       return candidates; //empty
@@ -50,14 +51,14 @@ public final class FindMeetingQuery {
       return candidates; //empty
     }
 
-    ArrayList<TimeRange> sortedUnavailableTimes = (ArrayList<TimeRange>) collectBusyTimes(request.getAttendees(), events);
+    ArrayList<TimeRange> sortedUnavailableTimes = (ArrayList<TimeRange>) collectBusyTimes(guests, events);
     if (sortedUnavailableTimes.isEmpty()) {
-      return sortedUnavailableTimes;
+      return Arrays.asList(TimeRange.WHOLE_DAY);
     }
-    ArrayList<TimeRange> freeWindows = (ArrayList<TimeRange>) findAppropiateFreeWindows(sortedUnavailableTimes, request.getDuration());
-    
+    ArrayList<TimeRange> freeWindows = (ArrayList<TimeRange>) findAppropiateFreeWindows(sortedUnavailableTimes, duration);
+
     if (!optionals.isEmpty()) {
-      ArrayList<TimeRange> optionalWindows = (ArrayList<TimeRange>) considerOptionalAttendees(freeWindows, optionals, events, request.getDuration());
+      ArrayList<TimeRange> optionalWindows = (ArrayList<TimeRange>) considerOptionalAttendees(freeWindows, optionals, events, duration);
       optionalWindows.retainAll(freeWindows);
       if (!optionalWindows.isEmpty()) {
         return optionalWindows;
