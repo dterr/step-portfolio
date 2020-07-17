@@ -24,6 +24,17 @@ import java.util.HashSet;
 /**
 * FindMeetingQuery Class - Uses Event, Meeting Request, and Time Range objects
 * to schedule a meeting time given participants and unique schedules.
+*
+* A query is fielded in the following methodology:
+*      Collect busy times
+*      Calculate free windows
+*      Choose best window
+*      Figure which time works best
+*   
+*     If optional attendees
+*      Collect optional busy times
+*      Calculate those free windows
+*      Calculate intersection
 */
 public final class FindMeetingQuery {
 
@@ -35,14 +46,7 @@ public final class FindMeetingQuery {
   * @param events A list of all of the events and attendees for the day
   * @return A list of possible time frames that satisfy the request.
   *
-    Collect busy times
-    Calculate free windows
-    Choose best window
-    Figure which time works best
-
-    Collect optional busy times
-    Calculate their free windows
-    Calculate intersection
+   
 
   */
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
@@ -59,7 +63,7 @@ public final class FindMeetingQuery {
     }
 
     if (!optionals.isEmpty()) {
-      return meetingWithOptionals(guests, optionals, duration, events)
+      return meetingWithOptionals(guests, optionals, duration, events);
     } else {
       return communalFreeWindows(guests, duration, events);
     }
@@ -69,9 +73,11 @@ public final class FindMeetingQuery {
   * Method meetingWithOptionals
   * This method handles the case that there are optional attendees for this meeting.
   * Accommodation of the optional attendees is all or nothing.
-  * @param 
-  * @param
-  * @return
+  * @param mandatory The required meeting attendees.
+  * @param optionals The optional meeting attendees.
+  * @param duration The desired length of the meeting.
+  * @param events A list of all the events occuring during that day.
+  * @return A list of the time slots that attempts to accommodate all attendees.
   */
   private Collection<TimeRange> meetingWithOptionals
       (Collection<String> mandatory, Collection<String> optionals, 
@@ -83,13 +89,23 @@ public final class FindMeetingQuery {
     if (mandatoryWindows.isEmpty()) {
       return optionalWindows;
     }
-    ArrayList<TimeRange> accommodatingWindows = windowIntersections(mandatoryWindows, optionalWindows);
+    ArrayList<TimeRange> accommodatingWindows = windowIntersections(mandatoryWindows, optionalWindows, duration);
     if (accommodatingWindows.isEmpty()) {
       return mandatoryWindows;
     }
-    return accommodatingWindows
+    return accommodatingWindows;
   }
 
+  /**
+  * Method communalFreeWindows
+  * This method finds the free time throughout the day that 
+  * a desired group of people have in common.
+  *
+  * @param attendees The desired group of people to find free time for.
+  * @param duration The minimum desired length of free time sought after
+  * @param events A list of all the events ocurring during one day.
+  * @return A list of the free spaces the desired people have in common.
+  */
   private Collection<TimeRange> communalFreeWindows 
       (Collection<String> attendees, long duration, Collection<Event> events) {
     
@@ -150,30 +166,13 @@ public final class FindMeetingQuery {
   }
 
   /**
-  * Method considerOptional Attendees
-  *
-  *
-  * @param
-  * @return
-  */
-  private Collection<TimeRange> considerOptionalAttendees
-      (Collection<TimeRange> mandatoryWindows, Collection<String> optionals, 
-      Collection<Event> events, long duration) {
-
-    ArrayList<TimeRange> sortedUnavailableTimes = 
-      (ArrayList<TimeRange>) collectBusyTimes(optionals, events);
-    if (sortedUnavailableTimes.isEmpty()) {
-      return sortedUnavailableTimes;
-    }
-
-    ArrayList<TimeRange> freeWindows = 
-      (ArrayList<TimeRange>) findAppropiateFreeWindows(sortedUnavailableTimes, duration);
-    return freeWindows;
-  }
-
-
-  /* Assume sorted collections 
-  * Returns intersection times.
+  * Method windowIntersections
+  * This method finds the times in common between two schedules that fit a time constraint.
+  * Assumes that each schedule is sorted from start to end of day.
+  * @param primary A schedule to consider.
+  * @param secondary A schedule to consider its intersection with the other.
+  * @param minWindowSize The desired minimum length for free times in common.
+  * @return A list of the times these schedules have in common.
   */
   private ArrayList<TimeRange> windowIntersections
       (ArrayList<TimeRange> primary, ArrayList<TimeRange> secondary, long minWindowSize) {
