@@ -57,14 +57,14 @@ public final class FindMeetingQuery {
     if (!optionals.isEmpty()) {
       ArrayList<TimeRange> optionalWindows = (ArrayList<TimeRange>) considerOptionalAttendees(freeWindows, optionals, events, duration);
       if (freeWindows.isEmpty()) {
-        return optionalWindows
-      }
-      optionalWindows.retainAll(freeWindows);
-      if (!optionalWindows.isEmpty()) {
         return optionalWindows;
       }
+      candidates = (ArrayList<TimeRange>) windowIntersections(optionalWindows, freeWindows, duration);
+      if (!candidates.isEmpty()) {
+        return candidates;
+      }
     }
-    if (freeWindows.isEmpty()) return Arrays.asList(TimeRange.WHOLE_DAY);
+    if (freeWindows.isEmpty()) return Arrays.asList();
     return freeWindows;
   }
 
@@ -104,13 +104,41 @@ public final class FindMeetingQuery {
     return freeWindows;
   }
 
-  private Collection<TimeRange> considerOptionalAttendees(Collection<TimeRange> mandatoryWindows, Collection<String> optionals, Collection<Event> events, long duration) {
-    ArrayList<TimeRange> sortedUnavailableTimes = (ArrayList<TimeRange>) collectBusyTimes(optionals, events);
+  private Collection<TimeRange> considerOptionalAttendees
+      (Collection<TimeRange> mandatoryWindows, Collection<String> optionals, 
+      Collection<Event> events, long duration) {
+
+    ArrayList<TimeRange> sortedUnavailableTimes = 
+      (ArrayList<TimeRange>) collectBusyTimes(optionals, events);
     if (sortedUnavailableTimes.isEmpty()) {
       return sortedUnavailableTimes;
     }
 
-    ArrayList<TimeRange> freeWindows = (ArrayList<TimeRange>) findAppropiateFreeWindows(sortedUnavailableTimes, duration);
+    ArrayList<TimeRange> freeWindows = 
+      (ArrayList<TimeRange>) findAppropiateFreeWindows(sortedUnavailableTimes, duration);
     return freeWindows;
+  }
+
+
+  /* Assume sorted collections 
+  * Returns intersection times.
+  */
+  private ArrayList<TimeRange> windowIntersections
+      (ArrayList<TimeRange> primary, ArrayList<TimeRange> secondary, long minWindowSize) {
+    
+    ArrayList<TimeRange> scheduleIntersxns = new ArrayList<TimeRange>();
+    for (int i = 0; i < primary.size(); i++) {
+      TimeRange a = primary.get(i);
+      for (int j = 0; j < secondary.size(); j++) {
+        TimeRange b = secondary.get(j);
+        if (a.overlaps(b)) {
+          TimeRange window = a.getOverlap(b);
+          if (window.duration() >= minWindowSize) {
+            scheduleIntersxns.add(window);
+          }
+        }
+      }
+    }
+    return scheduleIntersxns;
   }
 }
