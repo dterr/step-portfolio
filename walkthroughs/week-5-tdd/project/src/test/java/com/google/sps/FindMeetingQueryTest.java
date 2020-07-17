@@ -329,8 +329,8 @@ public final class FindMeetingQueryTest {
 
   @Test
   public void optionalWindowTooShort() {
-    /* There is one attendee and one optional attendee. 
-    The regular attendee is only busy for just enough time to accomodate the meeting.
+    /** There is one attendee and one optional attendee. 
+    * The regular attendee is only busy for just enough time to accomodate the meeting.
     */
     Collection<Event> events = Arrays.asList(
       new Event("Event 1", TimeRange.fromStartEnd(TimeRange.START_OF_DAY, TIME_0830AM, false),

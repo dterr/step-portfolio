@@ -21,9 +21,20 @@ import java.util.List;
 import java.util.Collections;
 import java.util.HashSet;
 
+/**
+* FindMeetingQuery Class - Uses Event, Meeting Request, and Time Range objects
+* to schedule a meeting time given participants and unique schedules.
+*/
 public final class FindMeetingQuery {
 
   /**
+  * Function query
+  * This method searches for common free windows in the schedules of the attendees needed. 
+  * Optional attendees for the meeting are also considered and accomodated if possible.
+  * @param request The object containing the requesting event and details
+  * @param events A list of all of the events and attendees for the day
+  * @return A list of possible time frames that satisfy the request.
+  *
     Collect busy times
     Calculate free windows
     Choose best window
@@ -68,7 +79,14 @@ public final class FindMeetingQuery {
     return freeWindows;
   }
 
-
+  /**
+  * Method collectBusyTimes
+  * This helper method takes a list of people and generates their schedules from a list of events.
+  *
+  * @param attendees The desired people whose schedules are considered.
+  * @param events A list of all of the events occuring.
+  * @return a sorted list of the busy times of the provided people.
+  */
   private Collection<TimeRange> collectBusyTimes(Collection<String> attendees, Collection<Event> events) {
     HashSet<TimeRange> unavailableTimes = new HashSet<TimeRange>();
     for (Event cur : events) {
@@ -82,6 +100,14 @@ public final class FindMeetingQuery {
     return sortedUnavailableTimes;
   }
 
+  /**
+  * Method findAppropiateFreeWindows
+  * This helper method determines free times within a communal schedule that are sufficiently long.
+  *
+  * @param sortedUnavailableTimes A list of busy times ordered for the day.
+  * @param duration The desired length of the meeting.
+  * @return A list of communal free times that are sufficiently long.
+  */
   private Collection<TimeRange> findAppropiateFreeWindows(Collection<TimeRange> sortedUnavailableTimes, long duration) {
     List<TimeRange> freeWindows = new ArrayList<>();
 
@@ -104,6 +130,13 @@ public final class FindMeetingQuery {
     return freeWindows;
   }
 
+  /**
+  * Method considerOptional Attendees
+  *
+  *
+  * @param
+  * @return
+  */
   private Collection<TimeRange> considerOptionalAttendees
       (Collection<TimeRange> mandatoryWindows, Collection<String> optionals, 
       Collection<Event> events, long duration) {
