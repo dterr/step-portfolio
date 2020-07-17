@@ -52,18 +52,19 @@ public final class FindMeetingQuery {
     }
 
     ArrayList<TimeRange> sortedUnavailableTimes = (ArrayList<TimeRange>) collectBusyTimes(guests, events);
-    if (sortedUnavailableTimes.isEmpty()) {
-      return Arrays.asList(TimeRange.WHOLE_DAY);
-    }
     ArrayList<TimeRange> freeWindows = (ArrayList<TimeRange>) findAppropiateFreeWindows(sortedUnavailableTimes, duration);
 
     if (!optionals.isEmpty()) {
       ArrayList<TimeRange> optionalWindows = (ArrayList<TimeRange>) considerOptionalAttendees(freeWindows, optionals, events, duration);
+      if (freeWindows.isEmpty()) {
+        return optionalWindows
+      }
       optionalWindows.retainAll(freeWindows);
       if (!optionalWindows.isEmpty()) {
         return optionalWindows;
       }
     }
+    if (freeWindows.isEmpty()) return Arrays.asList(TimeRange.WHOLE_DAY);
     return freeWindows;
   }
 
