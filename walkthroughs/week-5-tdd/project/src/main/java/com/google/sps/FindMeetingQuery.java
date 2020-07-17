@@ -30,7 +30,7 @@ public final class FindMeetingQuery {
   /**
   * Function query
   * This method searches for common free windows in the schedules of the attendees needed. 
-  * Optional attendees for the meeting are also considered and accomodated if possible.
+  * Optional attendees for the meeting are also considered and accommodated if possible.
   * @param request The object containing the requesting event and details
   * @param events A list of all of the events and attendees for the day
   * @return A list of possible time frames that satisfy the request.
@@ -52,30 +52,49 @@ public final class FindMeetingQuery {
     ArrayList<String> optionals = new ArrayList<>(request.getOptionalAttendees());
     long duration = request.getDuration();
     
-    if ((int) request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
-      return candidates; //empty
+    if (duration > TimeRange.WHOLE_DAY.duration()) {
+      return Arrays.asList();
     } else if (events.isEmpty() || guests.isEmpty()) {
-      candidates.add(TimeRange.WHOLE_DAY);
-      return candidates; //empty
-    } else if (guests.isEmpty()) {
-      candidates.add(TimeRange.WHOLE_DAY);
-      return candidates; //empty
+      return Arrays.asList(TimeRange.WHOLE_DAY);
     }
-
-    ArrayList<TimeRange> sortedUnavailableTimes = (ArrayList<TimeRange>) collectBusyTimes(guests, events);
-    ArrayList<TimeRange> freeWindows = (ArrayList<TimeRange>) findAppropiateFreeWindows(sortedUnavailableTimes, duration);
 
     if (!optionals.isEmpty()) {
-      ArrayList<TimeRange> optionalWindows = (ArrayList<TimeRange>) considerOptionalAttendees(freeWindows, optionals, events, duration);
-      if (freeWindows.isEmpty()) {
-        return optionalWindows;
-      }
-      candidates = (ArrayList<TimeRange>) windowIntersections(optionalWindows, freeWindows, duration);
-      if (!candidates.isEmpty()) {
-        return candidates;
-      }
+      return meetingWithOptionals(guests, optionals, duration, events)
+    } else {
+      return communalFreeWindows(guests, duration, events);
     }
-    if (freeWindows.isEmpty()) return Arrays.asList();
+  }
+
+  /**
+  * Method meetingWithOptionals
+  * This method handles the case that there are optional attendees for this meeting.
+  * Accommodation of the optional attendees is all or nothing.
+  * @param 
+  * @param
+  * @return
+  */
+  private Collection<TimeRange> meetingWithOptionals
+      (Collection<String> mandatory, Collection<String> optionals, 
+      long duration, Collection<Event> events) {
+        
+    ArrayList<TimeRange> mandatoryWindows = (ArrayList<TimeRange>) communalFreeWindows(mandatory, duration, events);
+    ArrayList<TimeRange> optionalWindows = (ArrayList<TimeRange>) communalFreeWindows(optionals, duration, events);
+
+    if (mandatoryWindows.isEmpty()) {
+      return optionalWindows;
+    }
+    ArrayList<TimeRange> accommodatingWindows = windowIntersections(mandatoryWindows, optionalWindows);
+    if (accommodatingWindows.isEmpty()) {
+      return mandatoryWindows;
+    }
+    return accommodatingWindows
+  }
+
+  private Collection<TimeRange> communalFreeWindows 
+      (Collection<String> attendees, long duration, Collection<Event> events) {
+    
+    ArrayList<TimeRange> sortedUnavailableTimes = (ArrayList<TimeRange>) collectBusyTimes(attendees, events);
+    ArrayList<TimeRange> freeWindows = (ArrayList<TimeRange>) findAppropiateFreeWindows(sortedUnavailableTimes, duration);
     return freeWindows;
   }
 
