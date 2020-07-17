@@ -46,8 +46,6 @@ public final class FindMeetingQuery {
   * @param events A list of all of the events and attendees for the day
   * @return A list of possible time frames that satisfy the request.
   *
-   
-
   */
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
 
