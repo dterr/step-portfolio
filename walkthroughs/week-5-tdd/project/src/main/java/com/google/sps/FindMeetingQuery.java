@@ -29,6 +29,10 @@ public final class FindMeetingQuery {
     Choose best window
     Figure which time works best
 
+    Collect optional busy times
+    Calculate their free windows
+    Calculate intersection
+
   */
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
 
@@ -46,24 +50,18 @@ public final class FindMeetingQuery {
       return candidates; //empty
     }
 
-
-
-    
-
     ArrayList<TimeRange> sortedUnavailableTimes = (ArrayList<TimeRange>) collectBusyTimes(request.getAttendees(), events);
     if (sortedUnavailableTimes.isEmpty()) {
       return sortedUnavailableTimes;
     }
     ArrayList<TimeRange> freeWindows = (ArrayList<TimeRange>) findAppropiateFreeWindows(sortedUnavailableTimes, request.getDuration());
-
-
     
-
-
     if (!optionals.isEmpty()) {
-      ArrayList<TimeRange> preferredTimes = new ArrayList<>();
-      boolean accomodated = false;
-      /*Collect free windows for the optionals. Return the intersection. */
+      ArrayList<TimeRange> optionalWindows = (ArrayList<TimeRange>) considerOptionalAttendees(freeWindows, optionals, events, request.getDuration());
+      optionalWindows.retainAll(freeWindows);
+      if (!optionalWindows.isEmpty()) {
+        return optionalWindows;
+      }
     }
     return freeWindows;
   }
@@ -101,6 +99,16 @@ public final class FindMeetingQuery {
     if (TimeRange.WHOLE_DAY.end() - previousEventEnd >= duration) {
       freeWindows.add(TimeRange.fromStartEnd(previousEventEnd, TimeRange.WHOLE_DAY.end(), false));
     }
+    return freeWindows;
+  }
+
+  private Collection<TimeRange> considerOptionalAttendees(Collection<TimeRange> mandatoryWindows, Collection<String> optionals, Collection<Event> events, long duration) {
+    ArrayList<TimeRange> sortedUnavailableTimes = (ArrayList<TimeRange>) collectBusyTimes(optionals, events);
+    if (sortedUnavailableTimes.isEmpty()) {
+      return sortedUnavailableTimes;
+    }
+
+    ArrayList<TimeRange> freeWindows = (ArrayList<TimeRange>) findAppropiateFreeWindows(sortedUnavailableTimes, duration);
     return freeWindows;
   }
 }
