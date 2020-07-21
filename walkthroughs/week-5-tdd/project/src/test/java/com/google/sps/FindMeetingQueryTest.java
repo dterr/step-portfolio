@@ -276,9 +276,13 @@ public final class FindMeetingQueryTest {
 
   @Test
   public void completelyBusyOptionalAttendee() {
-    /* Test three attendees who have different schedules, 
-     including one of whom is optional with an all-day event. 
-     */
+    // Test three attendees who have different schedules, 
+    // including one of whom is optional with an all-day event. 
+    //  Events  : |--A--|
+    //                          |--B--|
+    //           |----------C---------------|
+    // Day     : |--------------------------|
+    // Options :         |--1--|      |--2--|
 
     Collection<Event> events = Arrays.asList(
         new Event("Event 1", TimeRange.fromStartDuration(TIME_0800AM, DURATION_30_MINUTES),
@@ -303,9 +307,13 @@ public final class FindMeetingQueryTest {
 
   @Test
   public void considerOptionalAttendee() {
-    /* Test three attendees who have different schedules, 
-    including one of whom is optional. The optional attendee is accomodated.
-    */
+    // Test three attendees who have different schedules, 
+    // including one of whom is optional. The optional attendee is accomodated.
+    // Events  :      |--A--|     |--B--|
+    //                      |--C--|
+    //
+    // Day     : |----------------------------|
+    // Options : |--1-|                 |--2--|
 
     Collection<Event> events = Arrays.asList(
         new Event("Event 1", TimeRange.fromStartDuration(TIME_0800AM, DURATION_30_MINUTES),
@@ -329,9 +337,14 @@ public final class FindMeetingQueryTest {
 
   @Test
   public void optionalWindowTooShort() {
-    /** There is one attendee and one optional attendee. 
-    * The regular attendee is only busy for just enough time to accomodate the meeting.
-    */
+    // There is one attendee and one optional attendee. 
+    // The regular attendee is only busy for just enough time to accomodate the meeting.
+    //
+    // Events  : |--A--|     |--------A-------|
+    //                 |-C-|
+    //
+    // Day     : |----------------------------|
+    // Options :       |--1--|
     Collection<Event> events = Arrays.asList(
       new Event("Event 1", TimeRange.fromStartEnd(TimeRange.START_OF_DAY, TIME_0830AM, false),
           Arrays.asList(PERSON_A)),
@@ -352,9 +365,14 @@ public final class FindMeetingQueryTest {
 
   @Test
   public void onlyOptionalAttendees() {
-    /* There are two optional attendees and no mandatory attendees. 
-    The gaps in their schedules should be identified and returned.
-    */
+    // There are two optional attendees and no mandatory attendees. 
+    // The gaps in their schedules should be identified and returned.
+    //
+    // Events  : |----A----|
+    //             |--B---|
+    //
+    // Day     : |----------------------------|
+    // Options :           |------------------|
     Collection<Event> events = Arrays.asList(
       new Event("Event 1", TimeRange.fromStartEnd(TimeRange.START_OF_DAY, TIME_1115AM, false),
           Arrays.asList(PERSON_A)),
@@ -374,10 +392,15 @@ public final class FindMeetingQueryTest {
 
   @Test
   public void onlyUnavailableOptionalAttendees() {
-     /* There are two optional attendees and no mandatory attendees. 
-    Their schedules are mutually exclusive, thus returning a full day availability.
-    Confirms all-or-nothing property of optional attendees.
-    */
+    // There are two optional attendees and no mandatory attendees. 
+    // Their schedules are mutually exclusive, thus returning a full day availability.
+    // Confirms all-or-nothing property of optional attendees.
+    //
+    // Events  : |----A----|
+    //                     |--B---------------|
+    //
+    // Day     : |----------------------------|
+    // Options : |----------------------------|
     Collection<Event> events = Arrays.asList(
       new Event("Event 1", TimeRange.fromStartEnd(TimeRange.START_OF_DAY, TIME_1115AM, false),
           Arrays.asList(PERSON_A)),
