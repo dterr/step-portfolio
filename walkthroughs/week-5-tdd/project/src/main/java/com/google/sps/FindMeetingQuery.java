@@ -147,8 +147,8 @@ public final class FindMeetingQuery {
 
     int previousEventEnd = 0;
     for (TimeRange curWhen : sortedUnavailableTimes) {
-      if (curWhen.start() <= previousEventEnd) { //Overlapping events
-        if (!(curWhen.end() < previousEventEnd)) { //confirm no encapsulation
+      if (curWhen.start() <= previousEventEnd) { // Overlapping events
+        if (!(curWhen.end() < previousEventEnd)) { // confirm no encapsulation
           previousEventEnd = curWhen.end(); 
         }
         continue;
