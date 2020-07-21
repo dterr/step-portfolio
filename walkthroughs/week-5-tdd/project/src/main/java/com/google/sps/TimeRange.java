@@ -101,7 +101,7 @@ public final class TimeRange {
       throw new IllegalArgumentException("TimeRange arguments do not overlap.");
     }
 
-    //Should I use .start() or .start here?
+    // Using .start() for consistency with .end()
     if (this.start() <= other.start()) {
       if (this.end() <= other.end()) {
         return TimeRange.fromStartEnd(other.start(), this.end(), false);
