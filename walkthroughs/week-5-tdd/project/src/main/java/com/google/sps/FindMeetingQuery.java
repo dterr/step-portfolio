@@ -42,10 +42,10 @@ public final class FindMeetingQuery {
   * Function query
   * This method searches for common free windows in the schedules of the attendees needed. 
   * Optional attendees for the meeting are also considered and accommodated if possible.
+  *
   * @param request The object containing the requesting event and details
   * @param events A list of all of the events and attendees for the day
   * @return A list of possible time frames that satisfy the request.
-  *
   */
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
 
@@ -60,10 +60,10 @@ public final class FindMeetingQuery {
       return Arrays.asList(TimeRange.WHOLE_DAY);
     }
 
-    if (!optionals.isEmpty()) {
-      return meetingWithOptionals(guests, optionals, duration, events);
-    } else {
+    if (optionals.isEmpty()) {
       return communalFreeWindows(guests, duration, events);
+    } else {
+      return meetingWithOptionals(guests, optionals, duration, events);
     }
   }
 
@@ -71,6 +71,7 @@ public final class FindMeetingQuery {
   * Method meetingWithOptionals
   * This method handles the case that there are optional attendees for this meeting.
   * Accommodation of the optional attendees is all or nothing.
+  *
   * @param mandatory The required meeting attendees.
   * @param optionals The optional meeting attendees.
   * @param duration The desired length of the meeting.
@@ -167,6 +168,7 @@ public final class FindMeetingQuery {
   * Method windowIntersections
   * This method finds the times in common between two schedules that fit a time constraint.
   * Assumes that each schedule is sorted from start to end of day.
+  *
   * @param primary A schedule to consider.
   * @param secondary A schedule to consider its intersection with the other.
   * @param minWindowSize The desired minimum length for free times in common.
