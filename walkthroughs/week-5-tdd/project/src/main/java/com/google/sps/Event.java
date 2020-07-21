@@ -29,7 +29,6 @@ public final class Event {
   private final TimeRange when;
   private final Set<String> attendees = new HashSet<>();
 
-
   /**
   * A comparator for sorting events by their start time in ascending order.
   */
@@ -39,6 +38,7 @@ public final class Event {
       return Long.compare(a.when.start(), b.when.start());
     }
   };
+
   /**
    * Creates a new event.
    *
