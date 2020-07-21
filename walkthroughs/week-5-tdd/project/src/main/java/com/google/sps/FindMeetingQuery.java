@@ -85,7 +85,7 @@ public final class FindMeetingQuery {
     ArrayList<TimeRange> mandatoryWindows = (ArrayList<TimeRange>) communalFreeWindows(mandatory, duration, events);
     ArrayList<TimeRange> optionalWindows = (ArrayList<TimeRange>) communalFreeWindows(optionals, duration, events);
 
-    if (mandatoryWindows.isEmpty()) {
+    if (mandatory.isEmpty()) {
       return optionalWindows;
     }
     ArrayList<TimeRange> accommodatingWindows = windowIntersections(mandatoryWindows, optionalWindows, duration);
