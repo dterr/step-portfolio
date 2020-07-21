@@ -278,7 +278,7 @@ public final class FindMeetingQueryTest {
   public void completelyBusyOptionalAttendee() {
     // Test three attendees who have different schedules, 
     // including one of whom is optional with an all-day event. 
-    //  Events  : |--A--|
+    // Events  : |--A--|
     //                          |--B--|
     //           |----------C---------------|
     // Day     : |--------------------------|
