@@ -93,9 +93,9 @@ public final class TimeRange {
   }
 
   /**
-  * Returns the overlapping time window between two TimeRange elements.
-  * If there is no overlap, throws exception.
-  */
+   * Returns the overlapping time window between two TimeRange elements.
+   * If there is no overlap, throws exception.
+   */
   public TimeRange getOverlap(TimeRange other) {
     if (!this.overlaps(other)) {
       throw new IllegalArgumentException("TimeRange arguments do not overlap.");
