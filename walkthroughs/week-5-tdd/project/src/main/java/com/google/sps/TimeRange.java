@@ -93,6 +93,31 @@ public final class TimeRange {
   }
 
   /**
+   * Returns the overlapping time window between two TimeRange elements.
+   * If there is no overlap, throws exception.
+   */
+  public TimeRange getOverlap(TimeRange other) {
+    if (!this.overlaps(other)) {
+      throw new IllegalArgumentException("TimeRange arguments do not overlap.");
+    }
+
+    // Using .start() for consistency with .end()
+    if (this.start() <= other.start()) {
+      if (this.end() <= other.end()) {
+        return TimeRange.fromStartEnd(other.start(), this.end(), false);
+      } else {
+        return other;
+      }
+    } else {
+      if (this.end() <= other.end()) {
+        return this;
+      } else {
+        return TimeRange.fromStartEnd(this.start(), other.end(), false);
+      }
+    }
+  }
+
+  /**
    * Checks if this range completely contains another range. This means that {@code other} is a
    * subset of this range. This is an inclusive bounds, meaning that if two ranges are the same,
    * they contain each other.
